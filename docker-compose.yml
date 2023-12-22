@@ -1,0 +1,29 @@
+services:
+    backend:
+        extra_hosts:
+            - host.docker.internal:host-gateway
+        volumes:
+            - .:/app
+        build:
+            context: ./build/backend
+            args:
+                PORT: 8000
+        ports:
+            - "8000:8000"
+        depends_on:
+            - database
+        environment:
+            PHP_IDE_CONFIG: "serverName=Docker"
+    database:
+        image: mysql:8.2
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_PASSWORD: admin
+            MYSQL_USER: admin
+            MYSQL_DATABASE: main
+        ports:
+            - "3308:3306"
+        expose:
+            - "3306"
+

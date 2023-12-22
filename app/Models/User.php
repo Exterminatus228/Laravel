@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Http\Enums\Permissions;
 use App\Http\Enums\Roles;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -94,5 +95,17 @@ class User extends Authenticatable
     public function hasRoles(array $roles): bool
     {
         return $this->roles()->whereIn('type', array_column($roles, 'value'))->exists();
+    }
+
+    /**
+     * @param Permissions[] $permissions
+     * @return bool
+     */
+    public function hasPermissions(array $permissions): bool
+    {
+        $userPermissions = array_column($this->permissions(), 'type');
+        $validatePermissions = array_column($permissions, 'value');
+
+        return (bool)count(array_intersect($userPermissions, $validatePermissions));
     }
 }

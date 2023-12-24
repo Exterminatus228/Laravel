@@ -15,13 +15,8 @@ return new class extends Migration
     {
         Schema::create('permissions', static function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('role_id');
-            $table->unsignedInteger('type');
+            $table->unsignedInteger('type')->unique();
             $table->timestamps();
-        });
-        Schema::table('permissions', static function (Blueprint $table) {
-            $table->foreign('role_id', 'fk_permissions_roles')->references('id')->on('roles');
-            $table->unique(['role_id', 'type']);
         });
     }
 
@@ -30,9 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('permissions', static function (Blueprint $table) {
-            $table->dropForeign('fk_permissions_roles');
-        });
         Schema::dropIfExists('permissions');
     }
 };

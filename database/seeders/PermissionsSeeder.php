@@ -20,18 +20,32 @@ class PermissionsSeeder extends Seeder
      */
     public function run(): void
     {
+        $permissions = [];
+
+        foreach (Permissions::cases() as $case) {
+            $permissions[$case->value] = Permission::query()->firstOrCreate(['type' => $case->value]);
+        }
+
         $admin = Role::query()->where('type', '=', Roles::ADMIN->value)->first();
 
         if ($admin instanceof Role) {
-            $allowedPermissions = [
+            $rolePermissions = $admin->permissions()->get()->keyBy('type');
+            $allowedPermissions = array_column([
                 Permissions::CAN_CREATE_USERS
-            ];
-            foreach (array_column($allowedPermissions, 'value') as $type) {
-                Permission::query()->firstOrCreate([
-                    'role_id' => $admin->id,
-                    'type' => $type,
-                ]);
+            ], 'value');
+            $attachPermissions = [];
+
+            foreach ($allowedPermissions as $permission) {
+                if (empty($permissions[$permission])
+                    || !empty($rolePermissions[$permission])
+                ) {
+                    continue;
+                }
+
+                $attachPermissions[] = $permissions[$permission];
             }
+
+            $admin->permissions()->attach(array_column($attachPermissions, 'id'));
         }
     }
 }

@@ -8,7 +8,7 @@ use App\Http\Enums\Roles;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Class Role
@@ -46,10 +46,10 @@ class Role extends Model
     ];
 
     /**
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function permissions(): HasMany
+    public function permissions(): BelongsToMany
     {
-        return $this->hasMany(Permission::class, 'role_id', 'id');
+        return $this->belongsToMany(Permission::class, 'role_permissions', 'role_id', 'permission_id', 'id', 'id');
     }
 }

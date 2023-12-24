@@ -37,14 +37,11 @@ class UserService implements UserServiceInterface
             throw new ApiException('User was not saved');
         }
 
-        $role = Role::query()->where('type', '=', $dto->getRole()->value)->first();
-
-        if ($role instanceof Role
-            && !$user->hasRoles([$dto->getRole()])
-        ) {
-            $user->roles()->where('role_id')->attach($role->id);
-        }
-
+        $roles = Role::query()
+            ->whereNotIn('id', $user->roles()->as('roles')->select('roles.id'))
+            ->whereIn('type', array_column($dto->getRoles(), 'value'))
+            ->get();
+        $user->roles()->attach(array_column($roles->toArray(), 'id'));
         $user->tokens()->delete();
         $token = $user->createToken(self::PERSONAL_TOKEN_KEY)->plainTextToken;
         $user->remember_token = $token;

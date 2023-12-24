@@ -36,7 +36,8 @@ class CreateRequest extends ApiRequest
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'max:255', 'confirmed'],
             'password_confirmation' => ['required'],
-            'role' => ['numeric', Rule::in(array_column(Roles::cases(), 'value'))],
+            'roles' => ['array'],
+            'roles.*' => ['numeric', Rule::in(array_column(Roles::cases(), 'value'))],
         ];
     }
 
@@ -46,11 +47,15 @@ class CreateRequest extends ApiRequest
      */
     public function asObject(): CreateUserDTO
     {
+        $roles = array_map(static function (int $role) {
+            return Roles::from($role);
+        }, (array)$this->input('roles', [Roles::USER->value]));
+
         return new CreateUserDTO(
             (string)$this->input('name'),
             (string)$this->input('email'),
             (string)$this->input('password'),
-            Roles::from((int)$this->input('role', Roles::USER->value)),
+            $roles,
         );
     }
 }

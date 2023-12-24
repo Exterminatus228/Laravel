@@ -15,13 +15,13 @@ class CreateUserDTO
      * @param string $name
      * @param string $email
      * @param string $password
-     * @param Roles $role
+     * @param Roles[] $roles
      */
     public function __construct(
         private readonly string $name,
         private readonly string $email,
         private readonly string $password,
-        private readonly Roles $role = Roles::USER
+        private readonly array $roles = [Roles::USER]
     ) {}
 
     /**
@@ -49,10 +49,10 @@ class CreateUserDTO
     }
 
     /**
-     * @return Roles
+     * @return Roles[]
      */
-    public function getRole(): Roles
+    public function getRoles(): array
     {
-        return $this->role;
+        return $this->roles;
     }
 }

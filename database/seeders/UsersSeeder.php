@@ -32,7 +32,7 @@ class UsersSeeder extends Seeder
             'admin',
             'exterminatus228228@gmail.com',
             'ase3609ks',
-            Roles::SUPER_ADMIN,
+            [Roles::SUPER_ADMIN],
         );
         $this->userService->createUser($adminUser);
     }

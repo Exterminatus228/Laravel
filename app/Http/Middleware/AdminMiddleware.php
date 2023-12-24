@@ -28,6 +28,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return response()->setStatusCode(401);
+        return response(['message' => 'Unauthorized.'], 401);
     }
 }

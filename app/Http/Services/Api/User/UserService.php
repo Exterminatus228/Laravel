@@ -31,7 +31,7 @@ class UserService implements UserServiceInterface
         ], [
             'name' => $dto->getName(),
             'password' => $dto->getPassword(),
-        ])->first();
+        ]);
 
         if (!$user instanceof User) {
             throw new ApiException('User was not saved');

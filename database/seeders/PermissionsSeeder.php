@@ -30,9 +30,7 @@ class PermissionsSeeder extends Seeder
 
         if ($admin instanceof Role) {
             $rolePermissions = $admin->permissions()->get()->keyBy('type');
-            $allowedPermissions = array_column([
-                Permissions::CAN_CREATE_USERS
-            ], 'value');
+            $allowedPermissions = array_column(Permissions::cases(), 'value');
             $attachPermissions = [];
 
             foreach ($allowedPermissions as $permission) {

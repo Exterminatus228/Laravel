@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Services\Api\User;
 
-use App\Http\DTO\Api\User\CreateUserDTO;
+use App\Http\DTO\Api\User\UpdateUserDTO;
+use App\Http\DTO\Api\User\UserDTO;
 use App\Http\DTO\Api\User\LoginDTO;
 use App\Models\User;
 use Throwable;
@@ -20,17 +21,37 @@ interface UserServiceInterface
     public const PERSONAL_TOKEN_KEY = 'personalToken';
 
     /**
-     * @param CreateUserDTO $dto
+     * @param int $id
      * @return User
      * @throws Throwable
      */
-    public function createUser(CreateUserDTO $dto): User;
+    public function confirm(int $id): User;
 
     /**
-     * Returns token
-     * @param LoginDTO $dto
-     * @return string
+     * @param UserDTO $dto
+     * @return User
      * @throws Throwable
      */
-    public function login(LoginDTO $dto): string;
+    public function create(UserDTO $dto): User;
+
+    /**
+     * @param UpdateUserDTO $dto
+     * @return User
+     * @throws Throwable
+     */
+    public function update(UpdateUserDTO $dto): User;
+
+    /**
+     * @param LoginDTO $dto
+     * @return User
+     * @throws Throwable
+     */
+    public function login(LoginDTO $dto): User;
+
+    /**
+     * @param int $id
+     * @throws Throwable
+     * @return void
+     */
+    public function delete(int $id): void;
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Api\User;
 
-use App\Http\DTO\Api\User\CreateUserDTO;
+use App\Http\DTO\Api\User\UserDTO;
 use App\Http\Enums\Roles;
 use App\Http\Requests\Api\ApiRequest;
 use App\Models\User;
@@ -34,8 +34,7 @@ class CreateRequest extends ApiRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'max:255', 'confirmed'],
-            'password_confirmation' => ['required'],
+            'password' => ['required', 'string', 'max:255'],
             'roles' => ['array'],
             'roles.*' => ['numeric', Rule::in(array_column(Roles::cases(), 'value'))],
         ];
@@ -43,19 +42,20 @@ class CreateRequest extends ApiRequest
 
     /**
      * @inheritDoc
-     * @return CreateUserDTO
+     * @return UserDTO
      */
-    public function asObject(): CreateUserDTO
+    public function asObject(): UserDTO
     {
         $roles = array_map(static function (int $role) {
             return Roles::from($role);
         }, (array)$this->input('roles', [Roles::USER->value]));
 
-        return new CreateUserDTO(
+        return new UserDTO(
             (string)$this->input('name'),
             (string)$this->input('email'),
             (string)$this->input('password'),
             $roles,
+            true,
         );
     }
 }

@@ -1,19 +1,33 @@
 services:
-    backend:
-        extra_hosts:
-            - host.docker.internal:host-gateway
+    nginx:
         volumes:
             - .:/app
         build:
-            context: ./build/backend
-            args:
-                PORT: 8000
+            context: ./build/backend/nginx
+        depends_on:
+            - php
+        extra_hosts:
+            - host.docker.internal:host-gateway
         ports:
-            - "8000:8000"
+            - "8000:80"
+        expose:
+            - "80"
+        networks:
+            - backend
+    php:
+        volumes:
+            - .:/app
+        build:
+            context: ./build/backend/php
         depends_on:
             - database
         environment:
             PHP_IDE_CONFIG: "serverName=Docker"
+        expose:
+            - "9000"
+        networks:
+            - backend
+            - database
     database:
         image: mysql:8.2
         restart: always
@@ -26,4 +40,11 @@ services:
             - "3308:3306"
         expose:
             - "3306"
+        networks:
+            - database
 
+networks:
+    backend:
+        driver: bridge
+    database:
+        driver: bridge
